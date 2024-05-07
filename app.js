@@ -4,22 +4,17 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const path = require('path'); 
 const app = express();
-
 app.use(session({
   secret: 'your-secret-key', // Change this to a secure random key
   resave: false,
   saveUninitialized: true,
 }));
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // app.use(express.static(path.join(__dirname, '..', 'public')));
 // app.use(express.static(path.join(__dirname, 'public')));
-
-
 // const apiUrl = 'http://127.0.0.1:5000/api/scheme-data';
 const apiUrl = 'http://54.224.21.233:8001/api/scheme-data';
-
 // Middleware to check if the user is logged in
 function requireLogin(req, res, next) {
   if (req.session.userId) {
@@ -28,7 +23,6 @@ function requireLogin(req, res, next) {
     res.redirect('/login');
   }
 }
-
 // app.get('/login', (req, res) => {
 //   res.send(`
 //     <center>
@@ -64,7 +58,6 @@ function requireLogin(req, res, next) {
 //             align-items: center;
 //             height: 100vh;
 //           }
-
 //           .card {
 //             background-color: #fff;
 //             border-radius: 8px;
@@ -72,15 +65,12 @@ function requireLogin(req, res, next) {
 //             padding: 20px;
 //             text-align: center;
 //           }
-
 //           h3 {
 //             color: #4CAF50;
 //           }
-
 //           label {
 //             font-weight: bold;
 //           }
-
 //           input[type="text"],
 //           input[type="password"] {
 //             width: 250px;
@@ -90,7 +80,6 @@ function requireLogin(req, res, next) {
 //             border-radius: 4px;
 //             box-sizing: border-box;
 //           }
-
 //           button {
 //             background-color: #4CAF50;
 //             color: white;
@@ -99,7 +88,6 @@ function requireLogin(req, res, next) {
 //             border-radius: 4px;
 //             cursor: pointer;
 //           }
-
 //           button:hover {
 //             background-color: #45A049;
 //           }
@@ -135,7 +123,6 @@ app.get('/login', (req, res) => {
             align-items: center;
             height: 100vh;
           }
-
           .card {
             background-color: #fff;
             border-radius: 8px;
@@ -143,17 +130,14 @@ app.get('/login', (req, res) => {
             padding: 20px;
             text-align: center;
           }
-
           h1 {
             color: #4CAF50;
           }
-
           label {
             font-weight: bold;
             display: inline-block;
             text-align: left;
           }
-
           input[type="text"],
           input[type="password"] {
             width: 250px;
@@ -163,7 +147,6 @@ app.get('/login', (req, res) => {
             border-radius: 4px;
             box-sizing: border-box;
           }
-
           button {
             background-color: #4CAF50;
             color: white;
@@ -172,7 +155,6 @@ app.get('/login', (req, res) => {
             border-radius: 4px;
             cursor: pointer;
           }
-
           button:hover {
             background-color: #45A049;
           }
@@ -193,13 +175,10 @@ app.get('/login', (req, res) => {
     </html>
   `);
 });
-
-
 app.post('/login', (req, res) => {
   // For simplicity, you can use a hardcoded username and password
   const username = req.body.username;
   const password = req.body.password;
-
   if (username === 'admin' && password === 'admin') {
     req.session.userId = 1; // Use a unique user ID
     res.redirect('/');
@@ -207,7 +186,6 @@ app.post('/login', (req, res) => {
     res.send('Invalid username or password');
   }
 });
-
 // app.get('/', requireLogin, async (req, res) => {
 //   try {
 //     const data = await fetchData();
@@ -228,12 +206,10 @@ app.post('/login', (req, res) => {
 //     res.status(500).send('Internal Server Error');
 //   }
 // });
-
 app.get('/', requireLogin, async (req, res) => {
   try {
       const data = await fetchData();
       let formattedData = formatData(data);
-
       // Ensure formattedData is an array
       if (typeof formattedData === 'string') {
           formattedData = [formattedData];
@@ -241,120 +217,74 @@ app.get('/', requireLogin, async (req, res) => {
 
       // Display the "Logout" button
       res.send(`
-           <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              background-color: #f0f0f0;
-              margin: 0;
-              padding: 0;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              height: 100vh;
-            }
-
-            .container {
-              width: 80%;
-              margin: auto;
-            }
-
-            .card {
-              background-color: #fff;
-              border-radius: 8px;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-              padding: 20px;
-              margin-bottom: 20px;
-            }
-
-            h1 {
-              color: #4CAF50;
-              cursor: pointer;
-            }
-
-            .details {
-              display: none;
-            }
-
-            .steps {
-              margin-bottom: 10px;
-              text-align: justify;
-            }
-
-            .steps ul,
-            .steps ol {
-              padding-left: 20px;
-              margin: 0;
-            }
-
-            .steps li {
-              margin-bottom: 5px;
-            }
-
-            button {
-              background-color: #4CAF50;
-              color: white;
-              padding: 10px 20px;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              margin-bottom: 10px; /* Add margin to separate buttons */
-            }
-
-            button:hover {
-              background-color: #45A049;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1>Details Of Eligible Schemes</h1>
-            ${formattedData.map(item => `
-              <div class="card">
-                <h1 onclick="toggleDetails(this)">Scheme ${item.schemeIndex}</h1>
-                <div class="details">
-                  <h2>Eligibility Criteria:</h2>
-                  <div class="steps">
-                    <ul>
-                      ${item.eligibilityCriteria.split('\n').map(criteria => <li>${criteria}</li>).join('')}
-                    </ul>
+          <html>
+              <head>
+                  <style>
+                      body {
+                          font-family: Arial, sans-serif;
+                          background-color: #f0f0f0;
+                          margin: 0;
+                          padding: 0;
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          height: 100vh;
+                      }
+                      .card {
+                          background-color: white;
+                          border-radius: 5px;
+                          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                          padding: 20px;
+                          width: fit-content;
+                          text-align: justify;
+                      }
+                      h1 {
+                          text-align: center;
+                          font-size: 2em;
+                          margin-bottom: 1em;
+                      }
+                      ul {
+                          list-style-type: none;
+                          padding: 0;
+                          text-align: left;
+                      }
+                      li {
+                          margin-bottom: 10px;
+                      }
+                      button {
+                          background-color: #4CAF50; /* Green */
+                          color: white;
+                          padding: 10px 20px;
+                          border: none;
+                          border-radius: 4px;
+                          cursor: pointer;
+                      }
+                      button:hover {
+                          background-color: #45A049; /* Slightly darker green on hover */
+                      }
+                  </style>
+              </head>
+              <body>
+                  <div class="card">
+                      <h1>Details Of The Eligible Scheme</h1>
+                      <ul>
+                          ${formattedData.map(item => `<li>${item}</li>`).join('')}
+                      </ul>
+                      <br>
+                      <br>
+                      <form action="/new-page" method="get">
+                          <button type="submit">Apply</button>
+                      </form>
                   </div>
-                  <h2>Application Process:</h2>
-                  <div class="steps">
-                    <ol>
-                      ${item.applicationProcess.split('\n').map(step => <li>${step}</li>).join('')}
-                    </ol>
-                  </div>
-                  <form action="/new-page" method="get">
-                    <input type="hidden" name="schemeIndex" value="${item.schemeIndex}">
-                    <button type="submit">Apply</button>
-                  </form>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-
-          <script>
-            function toggleDetails(element) {
-              const details = element.nextElementSibling;
-              details.style.display = details.style.display === 'none' ? 'block' : 'none';
-            }
-          </script>
-        </body>
-      </html>
+              </body>
+          </html>
       `);
   } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');
   }
 });
-
  
-
-
-
-
 app.get('/new-page', requireLogin, (req, res) => {
   res.redirect('https://final-sever7april-1.onrender.com/');
 });
@@ -367,25 +297,20 @@ app.post('/logout', (req, res) => {
     res.redirect('/login');
   });
 });
-
 function formatData(data) {
   return data.map((item, index) => {
     const eligibilityCriteriaText = extractTextFromStructure(item.eligibilityCriteria.eligibilityDescription);
     const applicationProcessText = extractTextFromStructure(item.applicationProcess[0].process);
-
     return `
       Scheme ${index + 1}:
       Eligibility Criteria:
       ${eligibilityCriteriaText.trim()}
-
       Application Process:
       ${applicationProcessText.trim()}
-
       \n
     `;
   }).join('\n');
 }
-
 async function fetchData() {
   try {
     const response = await axios.get(apiUrl);
@@ -395,16 +320,13 @@ async function fetchData() {
     throw error;
   }
 }
-
 function extractTextFromStructure(structure) {
   if (!structure) {
     return '';
   }
-
   if (Array.isArray(structure)) {
     return structure.map((item) => extractTextFromStructure(item)).join('\n');
   }
-
   if (typeof structure === 'object') {
     if (structure.text) {
       return structure.text;
@@ -412,12 +334,10 @@ function extractTextFromStructure(structure) {
       return extractTextFromStructure(structure.children);
     }
   }
-
   return '';
 }
-
 const port = 6023;
 
 app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}0`);
+  console.log(`Server is running at http://localhost:${port}`);
 });
