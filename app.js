@@ -419,5 +419,5 @@ function extractTextFromStructure(structure) {
 const port = 6023;
 
 app.listen(port, () => {
-  console.log(Server is running at http://localhost:${port});
+  console.log('Server is running at http://localhost:${port}');
 });
