@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 // app.use(express.static(path.join(__dirname, '..', 'public')));
 // app.use(express.static(path.join(__dirname, 'public')));
 // const apiUrl = 'http://127.0.0.1:5000/api/scheme-data';
-const apiUrl = 'http://54.224.21.233:8001/api/scheme-data';
+const apiUrl = 'http://52.205.218.13:8003/api/scheme-data';
 // Middleware to check if the user is logged in
 function requireLogin(req, res, next) {
   if (req.session.userId) {
